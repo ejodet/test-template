@@ -1,0 +1,158 @@
+stages:
+- inputs:
+  - branch: master
+    dir_name: null
+    type: git
+    service: orders-api-repo
+  jobs:
+  - artifact_dir: ""
+    build_type: shell
+    name: Fetch code
+    script: |
+      #!/bin/bash
+      # set -x
+      cp -R -n ./ $ARCHIVE_DIR/ || true
+      source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/fetch_git_creds.sh")
+      export PATH=/opt/IBM/node-v4.2/bin:$PATH
+      npm install -g grunt-idra3
+      idra --publishbuildrecord --branch=$GIT_BRANCH --repositoryurl=$GIT_URL --commitid=$GIT_COMMIT --status=pass
+    type: builder
+  - name: Unit Tests
+    script: |-
+      #!/bin/bash
+      # set -x
+      if [ -f ./tests/run-tests.sh ]; then
+        source ./tests/run-tests.sh
+      else
+        echo "Test runner script not found: ./tests/run-tests.sh"
+      fi
+    test_type: simple
+    type: tester
+  name: BUILD
+  permission:
+    execute: TOOLCHAIN_ADMINS
+  properties:
+  - name: LOGICAL_APP_NAME
+    type: text
+    value: orders-api
+  - name: BUILD_PREFIX
+    type: text
+    value: master
+  triggers:
+  - events: '{"push":true,"pull_request":false,"pull_request_closed":false}'
+    type: git
+- inputs:
+  - dir_name: null
+    job: Fetch code
+    stage: BUILD
+    type: job
+  jobs:
+  - artifact_dir: ""
+    build_type: cr
+    image_name: orders-api-20190703065301089
+    name: Pre-build check
+    namespace: ejdsamples
+    script: "#!/bin/bash\n#set -x\nsource <(curl -sSL \"https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/check_prebuild.sh\")
+      \ "
+    target:
+      api_key: LiNSLYmGZhJ68OwMq/nSL6gpHH/RWNSHd+pu8FAa0iL/iF5h3RS0WYo6sPMktcVSQivgI3QCx+70jKTkn0K4zQ==
+      region_id: ibm:yp:us-south
+    type: builder
+  - artifact_dir: output
+    build_type: cr
+    image_name: orders-api-20190703065301089
+    name: Build container image
+    namespace: ejdsamples
+    script: |
+      #!/bin/bash
+      #set -x
+      source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/build_image.sh")
+    target:
+      api_key: LiNSLYmGZhJ68OwMq/nSL6gpHH/RWNSHd+pu8FAa0iL/iF5h3RS0WYo6sPMktcVSQivgI3QCx+70jKTkn0K4zQ==
+      region_id: ibm:yp:us-south
+    type: builder
+  - fail_stage: false
+    image_name: pipelineBuiltImage
+    image_tag: latest
+    name: Vulnerability Advisor
+    namespace: default
+    script: |
+      #!/bin/bash
+      #  set -x
+      source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/check_vulnerabilities.sh")
+    target:
+      api_key: LiNSLYmGZhJ68OwMq/nSL6gpHH/RWNSHd+pu8FAa0iL/iF5h3RS0WYo6sPMktcVSQivgI3QCx+70jKTkn0K4zQ==
+      region_id: ibm:yp:us-south
+    test_type: vulnerabilityadvisor
+    type: tester
+  name: CONTAINERIZE
+  permission:
+    execute: TOOLCHAIN_ADMINS
+  properties:
+  - name: build_properties
+    type: file
+    value: build.properties
+  - name: PIPELINE_IMAGE_URL
+    type: text
+    value: undefined
+  triggers:
+  - type: stage
+- inputs:
+  - dir_name: null
+    job: Build container image
+    stage: CONTAINERIZE
+    type: job
+  jobs:
+  - name: Publish Gate
+    script: |-
+      #!/bin/bash
+      # set -x
+      source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/check_publish_gate_component_helm_chart.sh")
+    test_type: simple
+    type: tester
+  - artifact_dir: ""
+    build_type: cr
+    image_name: orders-api-20190703065301089
+    name: Publish component chart
+    namespace: ejdsamples
+    script: |-
+      #!/bin/bash
+      # set -x
+      source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/publish_component_helm_chart.sh")
+    target:
+      api_key: LiNSLYmGZhJ68OwMq/nSL6gpHH/RWNSHd+pu8FAa0iL/iF5h3RS0WYo6sPMktcVSQivgI3QCx+70jKTkn0K4zQ==
+      region_id: ibm:yp:us-south
+    type: builder
+  name: PUBLISH
+  permission:
+    execute: TOOLCHAIN_ADMINS
+  properties:
+  - name: LOGICAL_APP_NAME
+    type: text
+    value: orders-api
+  - name: LOGICAL_ENV_NAME
+    type: text
+    value: PUBLISH
+  - name: BUILD_PREFIX
+    type: text
+    value: master
+  - name: build_properties
+    type: file
+    value: build.properties
+  - name: UMBRELLA_REPO_NAME
+    type: text
+    value: solution-20190703065301089
+  - name: POLICY_NAME
+    type: text
+    value: '[orders-api] PUBLISH Component Chart Checks'
+  - name: CHART_ROOT
+    type: text
+    value: chart
+  triggers:
+  - type: stage
+properties:
+- name: HELM_VERSION
+  type: text
+  value: 2.12.3
+- name: IBM_CLOUD_API_KEY
+  type: secure

@@ -1,0 +1,241 @@
+stages:
+- inputs:
+  - branch: master
+    dir_name: null
+    type: git
+    service: umbrella-repo
+  jobs:
+  - artifact_dir: output
+    build_type: cr
+    image_name: solution-20190703065301089
+    name: Build umbrella chart
+    namespace: ejdsamples
+    script: |
+      #!/bin/bash
+      #set -x
+      cp -R -n ./ $ARCHIVE_DIR/ || true
+      source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/fetch_git_creds.sh")
+      source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/build_umbrella_chart.sh")
+    target:
+      api_key: LiNSLYmGZhJ68OwMq/nSL6gpHH/RWNSHd+pu8FAa0iL/iF5h3RS0WYo6sPMktcVSQivgI3QCx+70jKTkn0K4zQ==
+      region_id: ibm:yp:us-south
+    type: builder
+  name: BUILD
+  permission:
+    execute: TOOLCHAIN_ADMINS
+  triggers:
+  - events: '{"push":true,"pull_request":false,"pull_request_closed":false}'
+    type: git
+- inputs:
+  - dir_name: null
+    job: Build umbrella chart
+    stage: BUILD
+    type: job
+  jobs:
+  - name: Staging gate
+    script: |-
+      #!/bin/bash
+      #set -x
+      source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/check_umbrella_gate.sh")
+    test_type: simple
+    type: tester
+  - deploy_type: cf
+    name: Config service
+    script: |
+      #!/bin/bash
+      SERVICE=$(cf services | grep myMicroservicesCloudant ||:)
+      if [ ! -z "$SERVICE" ]; then
+        PLAN=$(echo $SERVICE | awk '{print $3}')
+        if [ $PLAN == "Shared" ]; then
+          echo "Attempting to delete deprecated service (myMicroservicesCloudant:$PLAN)."
+          echo "Note: This can fail if the service is still bound to apps or service keys."
+          echo "      If so, please delete these apps or service keys explicitly first."
+          cf delete-service myMicroservicesCloudant -f
+          cf create-service cloudantNoSQLDB Lite myMicroservicesCloudant
+        else
+          echo "Keeping existing service (myMicroservicesCloudant:$PLAN)."
+        fi
+      else
+        cf create-service cloudantNoSQLDB Lite myMicroservicesCloudant
+      fi
+      export SERVICE_ID=$( cf service myMicroservicesCloudant --guid | tail -n 1)
+    target:
+      api_key: LiNSLYmGZhJ68OwMq/nSL6gpHH/RWNSHd+pu8FAa0iL/iF5h3RS0WYo6sPMktcVSQivgI3QCx+70jKTkn0K4zQ==
+      application: solution-20190703065301089
+      organization: eric_jodet@fr.ibm.com
+      region_id: ibm:yp:us-south
+      space: dev
+    type: deployer
+  - deploy_type: kubernetes
+    name: Config cluster
+    script: |
+      #!/bin/bash
+      #set -x
+      source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/check_predeploy_helm.sh")
+      source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/cluster_bind_service.sh")
+    target:
+      api_key: LiNSLYmGZhJ68OwMq/nSL6gpHH/RWNSHd+pu8FAa0iL/iF5h3RS0WYo6sPMktcVSQivgI3QCx+70jKTkn0K4zQ==
+      kubernetes_cluster: ejd_test_cluster
+      region_id: ibm:yp:us-south
+    type: deployer
+  - deploy_type: kubernetes
+    name: Deploy umbrella chart
+    script: |
+      #!/bin/bash
+      #set -x
+      source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/deploy_umbrella_chart.sh")
+    target:
+      api_key: LiNSLYmGZhJ68OwMq/nSL6gpHH/RWNSHd+pu8FAa0iL/iF5h3RS0WYo6sPMktcVSQivgI3QCx+70jKTkn0K4zQ==
+      kubernetes_cluster: ejd_test_cluster
+      region_id: ibm:yp:us-south
+    type: deployer
+  - COMMAND: |-
+      #!/bin/bash
+      # set -x
+      if [ -f ./tests/run-tests.sh ]; then
+        source ./tests/run-tests.sh
+      else
+        echo "Test runner script not found: ./tests/run-tests.sh"
+      fi
+    DL_ASSETS: "false"
+    SELECT_CMD: custom
+    enable_tests: true
+    extension_id: ibm.devops.services.pipeline.saucelabs
+    name: Sauce Labs Tests
+    test_file_pattern: '*.xml'
+    type: tester
+  name: STAGING
+  permission:
+    execute: TOOLCHAIN_ADMINS
+  properties:
+  - name: buildprops
+    type: file
+    value: build.properties
+  - name: CLUSTER_NAMESPACE
+    type: text
+    value: staging
+  - name: CF_APP_NAME
+    type: text
+    value: undefined
+  - name: APP_URL
+    type: text
+    value: undefined
+  - name: SAUCE_USERNAME
+    type: text
+    value: ""
+  - name: SAUCE_ACCESS_KEY
+    type: text
+    value: ""
+  - name: LOGICAL_ENV_NAME
+    type: text
+    value: STAGING
+  - name: HOST
+    type: text
+    value: ondemand.saucelabs.com
+  - name: PORT
+    type: text
+    value: "80"
+  - name: SERVICE_ID
+    type: text
+    value: undefined
+  - name: POLICY_NAME_FORMAT
+    type: text
+    value: '[%s] %s Deployment Checks'
+  triggers:
+  - type: stage
+- inputs:
+  - dir_name: null
+    job: Build umbrella chart
+    stage: BUILD
+    type: job
+  jobs:
+  - name: Production gate
+    script: |-
+      #!/bin/bash
+      #set -x
+      source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/check_umbrella_gate.sh")
+    test_type: simple
+    type: tester
+  - deploy_type: cf
+    name: Config service
+    script: |
+      #!/bin/bash
+      SERVICE=$(cf services | grep myMicroservicesCloudant ||:)
+      if [ ! -z "$SERVICE" ]; then
+        PLAN=$(echo $SERVICE | awk '{print $3}')
+        if [ $PLAN == "Shared" ]; then
+          echo "Attempting to delete deprecated service (myMicroservicesCloudant:$PLAN)."
+          echo "Note: This can fail if the service is still bound to apps or service keys."
+          echo "      If so, please delete these apps or service keys explicitly first."
+          cf delete-service myMicroservicesCloudant -f
+          cf create-service cloudantNoSQLDB Lite myMicroservicesCloudant
+        else
+          echo "Keeping existing service (myMicroservicesCloudant:$PLAN)."
+        fi
+      else
+        cf create-service cloudantNoSQLDB Lite myMicroservicesCloudant
+      fi
+      export SERVICE_ID=$( cf service myMicroservicesCloudant --guid | tail -n 1)
+    target:
+      api_key: LiNSLYmGZhJ68OwMq/nSL6gpHH/RWNSHd+pu8FAa0iL/iF5h3RS0WYo6sPMktcVSQivgI3QCx+70jKTkn0K4zQ==
+      application: solution-20190703065301089
+      organization: eric_jodet@fr.ibm.com
+      region_id: ibm:yp:us-south
+      space: dev
+    type: deployer
+  - deploy_type: kubernetes
+    name: Config cluster
+    script: |
+      #!/bin/bash
+      #set -x
+      source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/check_predeploy_helm.sh")
+      source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/cluster_bind_service.sh")
+    target:
+      api_key: LiNSLYmGZhJ68OwMq/nSL6gpHH/RWNSHd+pu8FAa0iL/iF5h3RS0WYo6sPMktcVSQivgI3QCx+70jKTkn0K4zQ==
+      kubernetes_cluster: ejd_test_cluster
+      region_id: ibm:yp:us-south
+    type: deployer
+  - deploy_type: kubernetes
+    name: Deploy umbrella chart
+    script: |
+      #!/bin/bash
+      #set -x
+      source <(curl -sSL "https://raw.githubusercontent.com/open-toolchain/commons/master/scripts/deploy_umbrella_chart.sh")
+    target:
+      api_key: LiNSLYmGZhJ68OwMq/nSL6gpHH/RWNSHd+pu8FAa0iL/iF5h3RS0WYo6sPMktcVSQivgI3QCx+70jKTkn0K4zQ==
+      kubernetes_cluster: ejd_test_cluster
+      region_id: ibm:yp:us-south
+    type: deployer
+  name: PROD
+  permission:
+    execute: TOOLCHAIN_ADMINS
+  properties:
+  - name: buildprops
+    type: file
+    value: build.properties
+  - name: CLUSTER_NAMESPACE
+    type: text
+    value: prod
+  - name: CF_APP_NAME
+    type: text
+    value: undefined
+  - name: APP_URL
+    type: text
+    value: undefined
+  - name: LOGICAL_ENV_NAME
+    type: text
+    value: PROD
+  - name: SERVICE_ID
+    type: text
+    value: undefined
+  - name: POLICY_NAME_FORMAT
+    type: text
+    value: '[%s] %s Deployment Checks'
+  triggers:
+  - type: stage
+properties:
+- name: HELM_VERSION
+  type: text
+  value: 2.12.3
+- name: IBM_CLOUD_API_KEY
+  type: secure
