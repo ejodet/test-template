@@ -32,11 +32,11 @@ stages:
       APP_URL=http://$(cf app $CF_APP_NAME | grep -e urls: -e routes: | awk '{print
       $2}')\n# View logs\n#cf logs \"${CF_APP}\" --recent\n"
     target:
-      api_key: tzFXVzXYWb9KV91TFRkHzcUpO/oc9ZsFLHL/CuWCRRKo/Zks5UNlvSkErU+oj5vsQivgI3QCx+70jKTkn0K4zQ==
       application: AIR-GAPPED
       organization: eric_jodet@fr.ibm.com
       region_id: ibm:ys1:us-south
       space: dev
+      api_key: tzFXVzXYWb9KV91TFRkHzcUpO/oc9ZsFLHL/CuWCRRKo/Zks5UNlvSkErU+oj5vsQivgI3QCx+70jKTkn0K4zQ==
     type: deployer
   name: DEPLOY
   permission:
