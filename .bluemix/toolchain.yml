@@ -1,296 +1,68 @@
 services:
-  alerting:
+  githubconsolidated03:
     parameters:
-      api_key: ""
-      key_type: api
-      service_key: ""
-      service_name: ""
-      service_url: ""
-      user_email: ""
-      user_phone: ""
-    service_id: pagerduty
-  catalog-api-build:
-    parameters:
-      api_url: http://pipeline-service/pipeline/pipelines/a2c5711a-ff77-417f-ba63-77a003c4a422
-      configuration:
-        content:
-          $text: pipeline_catalog-api-build.yml
-        env:
-          API_KEY: ""
-          APP_NAME: catalog-api
-          CF_APP_NAME: catalog-api-20190703065301089
-          GIT_REPO: catalog-api-repo
-          POLICY_NAME: '[catalog-api] PUBLISH Component Chart Checks'
-          REGISTRY_NAMESPACE: ejdsamples
-          REGISTRY_REGION_ID: ibm:yp:us-south
-          UMBRELLA_REPO_NAME: solution-20190703065301089
-      external_api_url: https://pipeline-service.us-south.devops.cloud.ibm.com/pipeline/pipelines/a2c5711a-ff77-417f-ba63-77a003c4a422
-      label: catalog-api-20190703065301089
-      name: catalog-api-20190703065301089
-      services:
-      - catalog-api-repo
-      ui_pipeline: true
-    service_id: pipeline
-  catalog-api-repo:
-    parameters:
-      access_token: ""
-      api_root_url: https://us-south.git.cloud.ibm.com/api
-      authorized: ""
-      custom_host: ""
-      enable_traceability: true
+      api_root_url: http://mjgit.rtp.raleigh.ibm.com/api
+      authorized: 464aa580-9f86-4215-927e-50f717b4e9ad
+      auto_init: false
+      blind_connection: true
+      enable_traceability: false
       extra_capabilities:
       - capability_id: git.issues
-        dashboard_url: https://us-south.git.cloud.ibm.com/eric_jodet/catalog-api-20190703065301089/issues
+        dashboard_url: http://mjgit.rtp.raleigh.ibm.com/ejodet/mytestproject/issues
         display_name: Issues
         enabled: false
-        label: catalog-api-20190703065301089
+        label: mytestproject
         readme: false
         tags:
         - think
         - code
-      git_id: hostedgit
+      git_id: 464aa580-9f86-4215-927e-50f717b4e9ad
       has_issues: false
-      label: catalog-api-20190703065301089
-      namespace_table: ""
-      owner_id: eric_jodet
-      private_repo: true
-      repo_name: catalog-api-20190703065301089
-      repo_url: https://us-south.git.cloud.ibm.com/eric_jodet/catalog-api-20190703065301089.git
-      root_url: ""
-      source_repo_url: ""
-      title: ""
-      token_url: https://otc-github-consolidated-broker.us-south.devops.cloud.ibm.com/github/token?git_id=hostedgit
+      label: mytestproject
+      legal: false
+      owner_id: ejodet
+      private_repo: false
+      repo_name: mytestproject
+      repo_url: http://mjgit.rtp.raleigh.ibm.com/ejodet/mytestproject
+      token_url: https://otc-github-consolidated-broker.us-south.devops.dev.cloud.ibm.com/github/token?git_id=464aa580-9f86-4215-927e-50f717b4e9ad
       type: link
-    service_id: hostedgit
-  clusters:
+    service_id: githubconsolidated
+  private_worker00:
     parameters:
-      additional-properties: null
-      dashboard_url: https://cloud.ibm.com/containers-kubernetes/clusters
-      description: Manage clusters
-      documentationUrl: https://cloud.ibm.com/docs/containers/container_index.html
-      imageUrl: data:image/svg+xml;base64,PHN2ZyBkYXRhLW5hbWU9IkxheWVyIDEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDE2OTMgMTk5Ni42NiI+PHBhdGggZD0iTTAgNTg0LjQ0YzAgMjYuODYgMTQuNzggNTMuNzMgNDQuMzEgNzQuMTFsNjk0LjcyIDQ3OS40MWM1OS4wOCA0MC43NyAxNTUuNzcgNDAuNzggMjE0Ljg2IDBsNjk0Ljc3LTQ3OS4zNGMyOS41NS0yMC4zOCA0NC4zMi00Ny4yNiA0NC4zMi03NC4xM3Y4MjguMTNjMCAyNi44Ny0xNC43NyA1My43NC00NC4zMiA3NC4xM2wtNjk0Ljc3IDQ3OS4zNGMtNTkuMDkgNDAuNzctMTU1Ljc4IDQwLjc2LTIxNC44NiAwTDQ0LjMxIDE0ODYuNjdDMTQuNzcgMTQ2Ni4yOSAwIDE0MzkuNDIgMCAxNDEyLjU0eiIvPjxwYXRoIGQ9Ik0wIDU4NC40NGMwIDI2Ljg2IDE0Ljc4IDUzLjczIDQ0LjMxIDc0LjExTDUzNyA5OTguNTFsMjAyLjEtMTM5LjQzYzU5LjA5LTQwLjc3IDE1NS43OC00MC43NiAyMTQuODYgMEwxMTU2IDk5OC41M2w0OTIuNjctMzM5LjljMjkuNTUtMjAuMzkgNDQuMzItNDcuMjYgNDQuMzItNzQuMTN2LS4zOGMwLTI2Ljg4LTE0Ljc3LTUzLjc1LTQ0LjMxLTc0LjEzTDk1NCAzMC41OGMtNTkuMTItNDAuNzUtMTU1LjgtNDAuNzUtMjE0Ljg5LS4wMUw0NC4zNCA1MDkuOTFDMTQuNzkgNTMwLjI5IDAgNTU3LjE3IDAgNTg0LjAzdjgxOC4yeiIgZmlsbD0iIzBmNmZmZiIvPjwvc3ZnPg==
-      label: Clusters
-      lifecyclePhase: RUN
-      name: Clusters
-      type: Container Service
-    service_id: customtool
-  dra:
+      label: ejd-pw
+      name: ejd-pw
+      workerQueueCredentials: ""
+      workerQueueIdentifier: ServiceId-746e5bed-cfb6-438d-a4db-f8b0d641c984
+    service_id: private_worker
+  sample-build:
     parameters:
-      cf_controller: https://api.ng.bluemix.net
-      dashboard_url: https://cloud.ibm.com/devops/insights/overview?toolchainId=c2a71e4e-3bc5-4c81-944f-49dfe2cbaf08
-      dlms_server: https://dlms.us-south.devopsinsights.cloud.ibm.com
-      dra_server: https://gateservice.us-south.devopsinsights.cloud.ibm.com
-      env_id: ibm:yp:us-south
-    service_id: draservicebroker
-  messaging:
-    parameters:
-      api_token: ""
-      channel_name: ""
-      team_url: ""
-    service_id: slack
-  orders-api-build:
-    parameters:
-      api_url: http://pipeline-service/pipeline/pipelines/0eec1199-ba3b-4c3c-9bfa-60d238c6f507
+      api_url: http://pipeline-service/pipeline/pipelines/d209bd41-bd8b-4c78-ba02-10bd6132a638
       configuration:
         content:
-          $text: pipeline_orders-api-build.yml
+          $text: pipeline_sample-build.yml
         env:
-          API_KEY: ""
-          APP_NAME: orders-api
-          CF_APP_NAME: orders-api-20190703065301089
-          GIT_REPO: orders-api-repo
-          POLICY_NAME: '[orders-api] PUBLISH Component Chart Checks'
-          REGISTRY_NAMESPACE: ejdsamples
-          REGISTRY_REGION_ID: ibm:yp:us-south
-          UMBRELLA_REPO_NAME: solution-20190703065301089
-      external_api_url: https://pipeline-service.us-south.devops.cloud.ibm.com/pipeline/pipelines/0eec1199-ba3b-4c3c-9bfa-60d238c6f507
-      label: orders-api-20190703065301089
-      name: orders-api-20190703065301089
+          private_worker00: '{{services.private_worker00.parameters.name}}'
+      external_api_url: https://pipeline-service.us-south.devops.dev.cloud.ibm.com/pipeline/pipelines/d209bd41-bd8b-4c78-ba02-10bd6132a638
+      label: AIR-GAPPED
+      name: AIR-GAPPED
       services:
-      - orders-api-repo
-      ui_pipeline: true
-    service_id: pipeline
-  orders-api-repo:
-    parameters:
-      access_token: ""
-      api_root_url: https://us-south.git.cloud.ibm.com/api
-      authorized: ""
-      custom_host: ""
-      enable_traceability: true
-      extra_capabilities:
-      - capability_id: git.issues
-        dashboard_url: https://us-south.git.cloud.ibm.com/eric_jodet/orders-api-20190703065301089/issues
-        display_name: Issues
-        enabled: false
-        label: orders-api-20190703065301089
-        readme: false
-        tags:
-        - think
-        - code
-      git_id: hostedgit
-      has_issues: false
-      label: orders-api-20190703065301089
-      namespace_table: ""
-      owner_id: eric_jodet
-      private_repo: true
-      repo_name: orders-api-20190703065301089
-      repo_url: https://us-south.git.cloud.ibm.com/eric_jodet/orders-api-20190703065301089.git
-      root_url: ""
-      source_repo_url: ""
-      title: ""
-      token_url: https://otc-github-consolidated-broker.us-south.devops.cloud.ibm.com/github/token?git_id=hostedgit
-      type: link
-    service_id: hostedgit
-  registry:
-    parameters:
-      additional-properties: null
-      dashboard_url: https://cloud.ibm.com/containers-kubernetes/registry/private
-      description: Manage your Docker images in private container registry
-      documentationUrl: https://cloud.ibm.com/docs/services/Registry/index.html
-      imageUrl: data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHg9IjAiIHk9IjAiIHdpZHRoPSI2NCIgaGVpZ2h0PSI2NCIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+PHN0eWxlPi5zdDB7ZmlsbDojOWU3YmZmfS5zdDF7ZmlsbDojMGYzNjU5fTwvc3R5bGU+PHBhdGggY2xhc3M9InN0MCIgZD0iTTE1LjggNTUuNmwtMTEuNi04Yy44LjUgMS44LjYgMi45LjJsMjYuNy0xMC4xYzIuMy0uOSA0LjEtMy42IDQuMS02VjMuMmMwLTEuMi0uNS0yLjEtMS4yLTIuN2wxMS41IDcuOWMuNy41IDEuMiAxLjQgMS4yIDIuN3YyOC41YzAgMi40LTEuOSA1LjEtNC4xIDZMMTguNyA1NS44Yy0xLjIuNC0yLjIuMy0yLjktLjJ6Ii8+PHBhdGggY2xhc3M9InN0MCIgZD0iTTU5LjggMTYuNGwtNi41LTQuNWMuNy41IDEuMiAxLjQgMS4yIDIuN3YyOC41YzAgMi40LTEuOSA1LjEtNC4xIDZMMjMuNyA1OS4yYy0xLjEuNC0yLjIuMy0yLjktLjJsNi41IDQuNWMuNy41IDEuOC42IDIuOS4ybDI2LjctMTAuMWMyLjMtLjkgNC4xLTMuNiA0LjEtNlYxOWMwLTEuMi0uNS0yLjEtMS4yLTIuNnoiLz48cGF0aCBjbGFzcz0ic3QxIiBkPSJNNDguMiA4LjRjLS43LS41LTEuOC0uNi0yLjktLjJMMTguNyAxOC40Yy0yLjMuOS00LjEgMy42LTQuMSA2djI4LjVjMCAxLjIuNSAyLjEgMS4yIDIuN0w0LjMgNDcuN0MzLjUgNDcuMSAzIDQ2LjIgMyA0NVYxNi41YzAtMi40IDEuOS01LjEgNC4xLTZMMzMuOC4zYzEuMS0uNCAyLjItLjMgMi45LjJsMTEuNSA3Ljl6Ii8+PHBhdGggY2xhc3M9InN0MSIgZD0iTTIwLjggNTljLS43LS41LTEuMi0xLjQtMS4yLTIuN1YyNy44YzAtMi40IDEuOS01LjEgNC4xLTZsMjYuNy0xMC4xYzEuMS0uNCAyLjItLjMgMi45LjJsNi41IDQuNWMtLjctLjUtMS44LS42LTIuOS0uMkwzMC4yIDI2LjNjLTIuMy45LTQuMSAzLjYtNC4xIDZ2MjguNWMwIDEuMi41IDIuMSAxLjIgMi43TDIwLjggNTl6Ii8+PC9zdmc+
-      label: Private repositories
-      lifecyclePhase: DELIVER
-      name: Private repositories
-      type: Container Registry
-    service_id: customtool
-  test:
-    parameters:
-      key: ""
-      username: ""
-    service_id: saucelabs
-  ui-build:
-    parameters:
-      api_url: http://pipeline-service/pipeline/pipelines/8bfca1ee-b6ba-40c7-af4b-1234372ad12b
-      configuration:
-        content:
-          $text: pipeline_ui-build.yml
-        env:
-          API_KEY: ""
-          APP_NAME: ui
-          CF_APP_NAME: ui-20190703065301089
-          GIT_REPO: ui-repo
-          POLICY_NAME: '[ui] PUBLISH Component Chart Checks'
-          REGISTRY_NAMESPACE: ejdsamples
-          REGISTRY_REGION_ID: ibm:yp:us-south
-          SAUCE_LABS: test
-          UMBRELLA_REPO_NAME: solution-20190703065301089
-      external_api_url: https://pipeline-service.us-south.devops.cloud.ibm.com/pipeline/pipelines/8bfca1ee-b6ba-40c7-af4b-1234372ad12b
-      label: ui-20190703065301089
-      name: ui-20190703065301089
-      services:
-      - ui-repo
+      - ""
+      - private_worker00
+      type: classic
       ui-pipeline: true
       ui_pipeline: true
     service_id: pipeline
-  ui-repo:
-    parameters:
-      access_token: ""
-      api_root_url: https://us-south.git.cloud.ibm.com/api
-      authorized: ""
-      custom_host: ""
-      enable_traceability: true
-      extra_capabilities:
-      - capability_id: git.issues
-        dashboard_url: https://us-south.git.cloud.ibm.com/eric_jodet/ui-20190703065301089/issues
-        display_name: Issues
-        enabled: false
-        label: ui-20190703065301089
-        readme: false
-        tags:
-        - think
-        - code
-      git_id: hostedgit
-      has_issues: false
-      label: ui-20190703065301089
-      namespace_table: ""
-      owner_id: eric_jodet
-      private_repo: true
-      repo_name: ui-20190703065301089
-      repo_url: https://us-south.git.cloud.ibm.com/eric_jodet/ui-20190703065301089.git
-      root_url: ""
-      source_repo_url: ""
-      title: ""
-      token_url: https://otc-github-consolidated-broker.us-south.devops.cloud.ibm.com/github/token?git_id=hostedgit
-      type: link
-    service_id: hostedgit
-  umbrella-build:
-    parameters:
-      api_url: http://pipeline-service/pipeline/pipelines/d67fc885-11ae-4cda-b3d1-5b4d3593e3ff
-      configuration:
-        content:
-          $text: pipeline_umbrella-build.yml
-        env:
-          API_KEY: ""
-          CF_APP_NAME: solution-20190703065301089
-          GIT_REPO: umbrella-repo
-          POLICY_NAME_FORMAT: '[%s] %s Deployment Checks'
-          PROD_CLUSTER_NAME: ejd_test_cluster
-          PROD_CLUSTER_NAMESPACE: prod
-          PROD_ORG_NAME: eric_jodet@fr.ibm.com
-          PROD_REGION_ID: ibm:yp:us-south
-          PROD_SPACE_NAME: dev
-          REGISTRY_NAMESPACE: ejdsamples
-          REGISTRY_REGION_ID: ibm:yp:us-south
-          SAUCE_LABS: test
-          STAGING_CLUSTER_NAME: ejd_test_cluster
-          STAGING_CLUSTER_NAMESPACE: staging
-          STAGING_ORG_NAME: eric_jodet@fr.ibm.com
-          STAGING_REGION_ID: ibm:yp:us-south
-          STAGING_SPACE_NAME: dev
-      external_api_url: https://pipeline-service.us-south.devops.cloud.ibm.com/pipeline/pipelines/d67fc885-11ae-4cda-b3d1-5b4d3593e3ff
-      label: solution-20190703065301089
-      name: solution-20190703065301089
-      services:
-      - umbrella-repo
-      - test
-      ui-pipeline: true
-      ui_pipeline: true
-    service_id: pipeline
-  umbrella-repo:
-    parameters:
-      access_token: ""
-      api_root_url: https://us-south.git.cloud.ibm.com/api
-      authorized: ""
-      custom_host: ""
-      enable_traceability: true
-      extra_capabilities:
-      - capability_id: git.issues
-        dashboard_url: https://us-south.git.cloud.ibm.com/eric_jodet/solution-20190703065301089/issues
-        display_name: Issues
-        enabled: true
-        label: solution-20190703065301089
-        readme: false
-        tags:
-        - think
-        - code
-      git_id: hostedgit
-      has_issues: true
-      label: solution-20190703065301089
-      namespace_table: ""
-      owner_id: eric_jodet
-      private_repo: true
-      repo_name: solution-20190703065301089
-      repo_url: https://us-south.git.cloud.ibm.com/eric_jodet/solution-20190703065301089.git
-      root_url: ""
-      source_repo_url: ""
-      title: ""
-      token_url: https://otc-github-consolidated-broker.us-south.devops.cloud.ibm.com/github/token?git_id=hostedgit
-      type: link
-    service_id: hostedgit
   webide:
     parameters:
-      container_url: ""
-      dashboard_url: /devops/code/edit/edit.html#,toolchain=c2a71e4e-3bc5-4c81-944f-49dfe2cbaf08
-      toolchain_id: c2a71e4e-3bc5-4c81-944f-49dfe2cbaf08
+      dashboard_url: /devops/code/edit/edit.html#,toolchain=81efcc6c-81e0-4a22-80a7-4c922cc3dddd
+      toolchain_id: 81efcc6c-81e0-4a22-80a7-4c922cc3dddd
     service_id: orion
 template:
-  description: helm-microservices-20190703065301089
-  name: Develop and test microservices with Kubernetes and Helm
+  description: AIR-GAPPED
+  name: Develop a Cloud Foundry app
   required:
-  - catalog-api-repo
-  - orders-api-repo
-  - ui-repo
-  - umbrella-repo
+  - null
+  - private_worker00
 toolchain:
-  name: helm-microservices-20190703065301089
+  name: AIR-GAPPED
 version: 2
