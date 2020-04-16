@@ -53,5 +53,5 @@ template:
   required:
   - githubconsolidated02
 toolchain:
-  name: AIR-GAPPED
+  name: 'test-air-gapped-{{timestamp}}'
 version: 2
