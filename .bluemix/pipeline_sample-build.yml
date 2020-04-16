@@ -33,10 +33,10 @@ stages:
       $2}')\n# View logs\n#cf logs \"${CF_APP}\" --recent\n"
     target:
       application: AIR-GAPPED
-      organization: eric_jodet@fr.ibm.com
+      organization: toto
       region_id: ibm:ys1:us-south
-      space: dev
-      api_key: tzFXVzXYWb9KV91TFRkHzcUpO/oc9ZsFLHL/CuWCRRKo/Zks5UNlvSkErU+oj5vsQivgI3QCx+70jKTkn0K4zQ==
+      space: titi
+      api_key: tutu
     type: deployer
   name: DEPLOY
   permission:
