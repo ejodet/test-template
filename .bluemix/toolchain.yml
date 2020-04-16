@@ -37,7 +37,7 @@ services:
       label: AIR-GAPPED
       name: AIR-GAPPED
       services:
-      - ""
+      - githubconsolidated02
       type: classic
       ui-pipeline: true
       ui_pipeline: true
