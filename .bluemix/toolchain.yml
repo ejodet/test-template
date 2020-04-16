@@ -1,68 +1,59 @@
 services:
-  githubconsolidated03:
-    parameters:
-      api_root_url: http://mjgit.rtp.raleigh.ibm.com/api
-      authorized: 464aa580-9f86-4215-927e-50f717b4e9ad
-      auto_init: false
-      blind_connection: true
-      enable_traceability: false
-      extra_capabilities:
-      - capability_id: git.issues
-        dashboard_url: http://mjgit.rtp.raleigh.ibm.com/ejodet/mytestproject/issues
-        display_name: Issues
-        enabled: false
-        label: mytestproject
-        readme: false
-        tags:
-        - think
-        - code
-      git_id: 464aa580-9f86-4215-927e-50f717b4e9ad
-      has_issues: false
-      label: mytestproject
-      legal: false
-      owner_id: ejodet
-      private_repo: false
-      repo_name: mytestproject
-      repo_url: http://mjgit.rtp.raleigh.ibm.com/ejodet/mytestproject
-      token_url: https://otc-github-consolidated-broker.us-south.devops.dev.cloud.ibm.com/github/token?git_id=464aa580-9f86-4215-927e-50f717b4e9ad
-      type: link
-    service_id: githubconsolidated
-  private_worker00:
-    parameters:
-      label: ejd-pw
-      name: ejd-pw
-      workerQueueCredentials: ""
-      workerQueueIdentifier: ServiceId-746e5bed-cfb6-438d-a4db-f8b0d641c984
-    service_id: private_worker
   sample-build:
     parameters:
-      api_url: http://pipeline-service/pipeline/pipelines/d209bd41-bd8b-4c78-ba02-10bd6132a638
+      api_url: http://pipeline-service/pipeline/pipelines/a319c3a6-4c73-4679-af8c-6cd39d49c7a0
       configuration:
         content:
           $text: pipeline_sample-build.yml
-        env:
-          private_worker00: '{{services.private_worker00.parameters.name}}'
-      external_api_url: https://pipeline-service.us-south.devops.dev.cloud.ibm.com/pipeline/pipelines/d209bd41-bd8b-4c78-ba02-10bd6132a638
-      label: AIR-GAPPED
-      name: AIR-GAPPED
+      external_api_url: https://pipeline-service.us-south.devops.dev.cloud.ibm.com/pipeline/pipelines/a319c3a6-4c73-4679-af8c-6cd39d49c7a0
+      label: simple-toolchain-20190205084227828
+      name: simple-toolchain-20190205084227828
       services:
-      - ""
-      - private_worker00
-      type: classic
+      - sample-repo
       ui-pipeline: true
       ui_pipeline: true
     service_id: pipeline
+  sample-repo:
+    parameters:
+      access_token: ""
+      api_root_url: https://git.stage1.ng.bluemix.net/api
+      authorized: ""
+      custom_host: ""
+      enable_traceability: true
+      extra_capabilities:
+      - capability_id: git.issues
+        dashboard_url: https://us-south.git.dev.cloud.ibm.com/eric_jodet/simple-toolchain-20190205084227828/issues
+        display_name: Issues
+        enabled: true
+        label: simple-toolchain-20190205084227828
+        tags:
+        - think
+        - code
+      git_id: hostedgit
+      has_issues: true
+      label: simple-toolchain-20190205084227828
+      namespace_table: ""
+      owner_id: eric_jodet
+      private_repo: true
+      repo_name: simple-toolchain-20190205084227828
+      repo_url: https://us-south.git.dev.cloud.ibm.com/eric_jodet/simple-toolchain-20190205084227828.git
+      root_url: ""
+      source_repo_url: ""
+      title: ""
+      token_url: https://otc-github-consolidated-broker.us-south.devops.dev.cloud.ibm.com/github/token?git_id=hostedgit
+      type: link
+    service_id: hostedgit
   webide:
     parameters:
-      dashboard_url: /devops/code/edit/edit.html#,toolchain=81efcc6c-81e0-4a22-80a7-4c922cc3dddd
-      toolchain_id: 81efcc6c-81e0-4a22-80a7-4c922cc3dddd
+      container_url: ""
+      dashboard_url: /devops/code/edit/edit.html#,toolchain=aeefc4e1-7965-459e-9587-7d44ff2d6b46
+      toolchain_id: aeefc4e1-7965-459e-9587-7d44ff2d6b46
     service_id: orion
 template:
-  description: AIR-GAPPED
+  description: simple-toolchain-20190205084227828
   name: Develop a Cloud Foundry app
   required:
-  - null
-  - private_worker00
+  - sample-repo
 toolchain:
-  name: AIR-GAPPED
+  name: simple-toolchain-20190205084227828
 version: 2
