@@ -38,7 +38,7 @@ services:
       source_repo_url: https://github.com/open-toolchain/node-hello-world
       token_url: https://otc-github-consolidated-broker.w3ibm.bluemix.net/github/token?git_id=integrated
       type: link
-    service_id: hostedgit
+    service_id: github
   webide:
     parameters:
       container_url: ""
