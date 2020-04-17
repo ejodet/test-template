@@ -47,9 +47,9 @@ services:
     service_id: orion
 template:
   description: simple-toolchain-20200417053340826
-  name: Develop a Cloud Foundry app
+  name: Test air-gapped template
   required:
   - sample-repo
 toolchain:
-  name: KEEP-TEST-EXPORT
+  name: 'test-air-gapped-{{timestamp}}'
 version: 2
