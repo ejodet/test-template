@@ -1,57 +1,55 @@
 services:
-  githubconsolidated02:
-    parameters:
-      api_root_url: http://mjgit.rtp.raleigh.ibm.com/api
-      authorized: 464aa580-9f86-4215-927e-50f717b4e9ad
-      auto_init: false
-      blind_connection: true
-      enable_traceability: false
-      extra_capabilities:
-      - capability_id: git.issues
-        dashboard_url: http://mjgit.rtp.raleigh.ibm.com/ejodet/mytestproject/issues
-        display_name: Issues
-        enabled: false
-        label: mytestproject
-        readme: false
-        tags:
-        - think
-        - code
-      git_id: 464aa580-9f86-4215-927e-50f717b4e9ad
-      has_issues: false
-      label: mytestproject
-      legal: false
-      owner_id: ejodet
-      private_repo: false
-      repo_name: mytestproject
-      repo_url: http://mjgit.rtp.raleigh.ibm.com/ejodet/mytestproject
-      token_url: https://otc-github-consolidated-broker.us-south.devops.dev.cloud.ibm.com/github/token?git_id=464aa580-9f86-4215-927e-50f717b4e9ad
-      type: link
-    service_id: githubconsolidated
   sample-build:
     parameters:
-      api_url: http://pipeline-service/pipeline/pipelines/d209bd41-bd8b-4c78-ba02-10bd6132a638
+      api_url: https://devops-api.w3ibm.bluemix.net/v1/pipeline/pipelines/49e021fe-0941-4f47-b418-dab7a1c5c6c5
       configuration:
         content:
           $text: pipeline_sample-build.yml
-      external_api_url: https://pipeline-service.us-south.devops.dev.cloud.ibm.com/pipeline/pipelines/d209bd41-bd8b-4c78-ba02-10bd6132a638
-      label: AIR-GAPPED
-      name: AIR-GAPPED
+      label: simple-toolchain-20200417053340826
+      name: simple-toolchain-20200417053340826
       services:
-      - githubconsolidated02
-      type: classic
+      - sample-repo
       ui-pipeline: true
       ui_pipeline: true
     service_id: pipeline
+  sample-repo:
+    parameters:
+      api_root_url: https://githoub.ibm.com/api
+      enable_traceability: false
+      extra_capabilities:
+      - capability_id: git.issues
+        dashboard_url: https://githoub.ibm.com/eric-jodet/simple-toolchain-20200417053340826/issues
+        display_name: Issues
+        enabled: false
+        label: simple-toolchain-20200417053340826
+        tags:
+        - think
+        - code
+      git_id: integrated
+      has_issues: false
+      label: simple-toolchain-20200417053340826
+      legal: true
+      legal_label: ""
+      namespace_table: ""
+      owner_id: eric-jodet
+      private_repo: false
+      repo_name: simple-toolchain-20200417053340826
+      repo_url: https://githoub.ibm.com/eric-jodet/simple-toolchain-20200417053340826.git
+      source_repo_url: https://github.com/open-toolchain/node-hello-world
+      token_url: https://otc-github-consolidated-broker.w3ibm.bluemix.net/github/token?git_id=integrated
+      type: link
+    service_id: github_integrated
   webide:
     parameters:
-      dashboard_url: /devops/code/edit/edit.html#,toolchain=81efcc6c-81e0-4a22-80a7-4c922cc3dddd
-      toolchain_id: 81efcc6c-81e0-4a22-80a7-4c922cc3dddd
+      container_url: ""
+      dashboard_url: /devops/code/edit/edit.html#,toolchain=c3198834-ced7-4358-9d2c-386b80c2cc27
+      toolchain_id: c3198834-ced7-4358-9d2c-386b80c2cc27
     service_id: orion
 template:
-  description: AIR-GAPPED
-  name: AIR GAPPED
+  description: simple-toolchain-20200417053340826
+  name: Develop a Cloud Foundry app
   required:
-  - githubconsolidated02
+  - sample-repo
 toolchain:
-  name: 'test-air-gapped-{{timestamp}}'
+  name: KEEP-TEST-EXPORT
 version: 2

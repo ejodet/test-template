@@ -3,44 +3,44 @@ stages:
   - branch: master
     dir_name: null
     type: git
-    service: githubconsolidated02
+    service: sample-repo
   jobs:
   - artifact_dir: ""
     name: Build
     type: builder
   name: BUILD
-  permission:
-    execute: TOOLCHAIN_ADMINS
+  properties:
+  - name: BUILD_TEXT_PROP
+    type: text
+    value: toto
+  - name: BUILD_SECURE_PROP
+    type: secure
   triggers:
-  - events: '{"push":true,"pull_request":false,"pull_request_closed":false}'
-    type: git
+  - type: commit
 - inputs:
   - dir_name: null
     job: Build
     stage: BUILD
     type: job
   jobs:
-  - deploy_type: cf
-    name: Rolling Deploy
-    script: "#!/bin/bash\n# Push app\nif ! cf app \"$CF_APP\"; then  \n  cf push \"$CF_APP\"\nelse\n
-      \ OLD_CF_APP=\"${CF_APP}-OLD-$(date +\"%s\")\"\n  rollback() {\n    set +e  \n
-      \   if cf app \"$OLD_CF_APP\"; then\n      cf logs \"$CF_APP\" --recent\n      cf
-      delete \"$CF_APP\" -f\n      cf rename \"$OLD_CF_APP\" \"$CF_APP\"\n    fi\n
-      \   exit 1\n  }\n  set -e\n  trap rollback ERR\n  cf rename \"$CF_APP\" \"$OLD_CF_APP\"\n
-      \ cf push \"$CF_APP\"\n  cf delete \"$OLD_CF_APP\" -f\nfi\n# Export app name
-      and URL for use in later Pipeline jobs\nexport CF_APP_NAME=\"$CF_APP\"\nexport
-      APP_URL=http://$(cf app $CF_APP_NAME | grep -e urls: -e routes: | awk '{print
-      $2}')\n# View logs\n#cf logs \"${CF_APP}\" --recent\n"
+  - deploy_permission: DEV_IN_SPACE
+    deploy_type: cf
+    name: Deploy
+    script: |
+      #!/bin/bash
+      # Push app
+      export CF_APP_NAME="$CF_APP"
+      cf push "${CF_APP_NAME}"
+      export APP_URL=http://$(cf app $CF_APP_NAME | grep -e urls: -e routes: | awk '{print $2}')
+      # View logs
+      #cf logs "${CF_APP_NAME}" --recent
     target:
-      application: AIR-GAPPED
-      organization: toto
-      region_id: ibm:ys1:us-south
-      space: titi
-      api_key: tutu
+      application: simple-toolchain-20200417053340826
+      organization: eric_jodetfribmcom
+      region_id: w3ibm:prod:us-south
+      space: dev
     type: deployer
   name: DEPLOY
-  permission:
-    execute: TOOLCHAIN_ADMINS
   properties:
   - name: CF_APP_NAME
     type: text
@@ -48,7 +48,8 @@ stages:
   - name: APP_URL
     type: text
     value: undefined
+  - name: DEPLOY_SECRURE_PROP
+    type: secure
   triggers:
   - type: stage
-  worker: null
-properties: []
+properties: null
