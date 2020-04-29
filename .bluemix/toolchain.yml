@@ -1,55 +1,54 @@
 services:
-  sample-build:
+  gitlab02:
     parameters:
-      api_url: https://devops-api.w3ibm.bluemix.net/v1/pipeline/pipelines/49e021fe-0941-4f47-b418-dab7a1c5c6c5
-      configuration:
-        content:
-          $text: pipeline_sample-build.yml
-      label: simple-toolchain-20200417053340826
-      name: simple-toolchain-20200417053340826
-      services:
-      - sample-repo
-      ui-pipeline: true
-      ui_pipeline: true
-    service_id: pipeline
-  sample-repo:
-    parameters:
-      api_root_url: https://githoub.ibm.com/api
+      api_root_url: http://mjgit.rtp.raleigh.ibm.com/api
+      authorized: f3ed0574-d5fa-48aa-bede-742901c1f157
+      blind_connection: true
       enable_traceability: false
       extra_capabilities:
       - capability_id: git.issues
-        dashboard_url: https://githoub.ibm.com/eric-jodet/simple-toolchain-20200417053340826/issues
+        dashboard_url: http://mjgit.rtp.raleigh.ibm.com/ejodet/mytestproject/issues
         display_name: Issues
         enabled: false
-        label: simple-toolchain-20200417053340826
+        label: mytestproject
+        readme: false
         tags:
         - think
         - code
-      git_id: integrated
-      has_issues: false
-      label: simple-toolchain-20200417053340826
-      legal: true
-      legal_label: ""
-      namespace_table: ""
-      owner_id: eric-jodet
+      git_id: f3ed0574-d5fa-48aa-bede-742901c1f157
+      integration_owner: ""
+      label: mytestproject
+      owner_id: ejodet
       private_repo: false
-      repo_name: simple-toolchain-20200417053340826
-      repo_url: https://githoub.ibm.com/eric-jodet/simple-toolchain-20200417053340826.git
-      source_repo_url: https://github.com/open-toolchain/node-hello-world
-      token_url: https://otc-github-consolidated-broker.w3ibm.bluemix.net/github/token?git_id=integrated
+      repo_name: mytestproject
+      repo_url: http://mjgit.rtp.raleigh.ibm.com/ejodet/mytestproject
+      source_repo_url: ""
+      token_url: https://otc-github-consolidated-broker.us-south.devops.dev.cloud.ibm.com/github/token?git_id=f3ed0574-d5fa-48aa-bede-742901c1f157
       type: link
-    service_id: github_integrated
+    service_id: gitlab
+  sample-build:
+    parameters:
+      api_url: http://pipeline-service/pipeline/pipelines/864c1369-ed48-4ce8-8835-adc7eab8e746
+      configuration:
+        content:
+          $text: pipeline_sample-build.yml
+      external_api_url: https://pipeline-service.us-south.devops.dev.cloud.ibm.com/pipeline/pipelines/864c1369-ed48-4ce8-8835-adc7eab8e746
+      label: test-export-air-gapped
+      name: test-export-air-gapped
+      services:
+      - ""
+      type: classic
+      ui-pipeline: true
+      ui_pipeline: true
+    service_id: pipeline
   webide:
     parameters:
-      container_url: ""
-      dashboard_url: /devops/code/edit/edit.html#,toolchain=c3198834-ced7-4358-9d2c-386b80c2cc27
-      toolchain_id: c3198834-ced7-4358-9d2c-386b80c2cc27
+      dashboard_url: /devops/code/edit/edit.html#,toolchain=736d4535-197a-4034-a95f-07a4d8df5867
+      toolchain_id: 736d4535-197a-4034-a95f-07a4d8df5867
     service_id: orion
 template:
-  description: simple-toolchain-20200417053340826
-  name: test air gapped
-  required:
-  - sample-repo
+  description: test-export-air-gapped
+  name: Develop a Cloud Foundry app
 toolchain:
-  name: TEST
+  name: test-export-air-gapped
 version: 2
