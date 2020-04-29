@@ -36,7 +36,7 @@ services:
       label: test-export-air-gapped
       name: test-export-air-gapped
       services:
-      - ""
+      - gitlab02
       type: classic
       ui-pipeline: true
       ui_pipeline: true
@@ -49,6 +49,8 @@ services:
 template:
   description: test-export-air-gapped
   name: Develop a Cloud Foundry app
+  required:
+  - gitlab02
 toolchain:
   name: test-export-air-gapped
 version: 2

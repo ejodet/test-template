@@ -3,7 +3,7 @@ stages:
   - branch: master
     dir_name: null
     type: git
-    service: ""
+    service: "gitlab02"
   jobs:
   - artifact_dir: ""
     name: Build
