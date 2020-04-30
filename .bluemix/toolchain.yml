@@ -1,31 +1,4 @@
 services:
-  gitlab00:
-    parameters:
-      api_root_url: http://mjgit.rtp.raleigh.ibm.com/api
-      authorized: f3ed0574-d5fa-48aa-bede-742901c1f157
-      blind_connection: true
-      enable_traceability: false
-      env_id: ibm:ys1:us-south
-      extra_capabilities:
-      - capability_id: git.issues
-        dashboard_url: http://mjgit.rtp.raleigh.ibm.com/ejodet/mytestproject.git/issues
-        display_name: Issues
-        enabled: false
-        label: mytestproject
-        readme: false
-        tags:
-        - think
-        - code
-      git_id: f3ed0574-d5fa-48aa-bede-742901c1f157
-      label: mytestproject
-      owner_id: ejodet
-      private_repo: false
-      repo_name: mytestproject
-      repo_url: http://mjgit.rtp.raleigh.ibm.com/ejodet/mytestproject.git
-      token_url: https://otc-github-consolidated-broker.us-south.devops.dev.cloud.ibm.com/github/token?git_id=f3ed0574-d5fa-48aa-bede-742901c1f157
-      toolchainId: 84998709-c364-4ea5-98a8-eb56185fb438
-      type: link
-    service_id: gitlab
   sample-build:
     parameters:
       api_url: http://pipeline-service/pipeline/pipelines/06f3aa18-0c02-4488-8b65-a306c226bc7e
@@ -36,11 +9,40 @@ services:
       label: CF-TEMPLATE
       name: CF-TEMPLATE
       services:
-      - gitlab00
+      - sample-repo
       type: classic
       ui-pipeline: true
       ui_pipeline: true
     service_id: pipeline
+  sample-repo:
+    parameters:
+      api_root_url: http://mjgit.rtp.raleigh.ibm.com/api
+      authorized: hostedgit
+      custom_host: ""
+      enable_traceability: true
+      extra_capabilities:
+      - capability_id: git.issues
+        dashboard_url: http://mjgit.rtp.raleigh.ibm.com/ejodet/mytestproject/issues
+        display_name: Issues
+        enabled: true
+        label: CF-TEMPLATE
+        readme: false
+        tags:
+        - think
+        - code
+      git_id: hostedgit
+      has_issues: true
+      integration_owner: IBMid-270001AA6Q
+      label: CF-TEMPLATE
+      namespace_table: ""
+      owner_id: eric_jodet
+      private_repo: true
+      repo_name: CF-TEMPLATE
+      repo_url: http://mjgit.rtp.raleigh.ibm.com/ejodet/mytestproject.git
+      source_repo_url: https://github.com/open-toolchain/node-hello-world
+      token_url: https://otc-github-consolidated-broker.us-south.devops.dev.cloud.ibm.com/github/token?git_id=hostedgit
+      type: link
+    service_id: gitlab
   webide:
     parameters:
       dashboard_url: /devops/code/edit/edit.html#,toolchain=84998709-c364-4ea5-98a8-eb56185fb438
@@ -50,7 +52,7 @@ template:
   description: CF-TEMPLATE
   name: Develop a Cloud Foundry app
   required:
-  - gitlab00
+  - sample-repo
 toolchain:
-  name: AIR-GAPPED-TOOLCHAIN
+  name: CF-TEMPLATE
 version: 2
