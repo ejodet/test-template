@@ -18,7 +18,7 @@ services:
     parameters:
       api_root_url: http://mjgit.rtp.raleigh.ibm.com/api
       authorized: f3ed0574-d5fa-48aa-bede-742901c1f157
-      custom_host: ""
+      blind_connection: true
       enable_traceability: true
       extra_capabilities:
       - capability_id: git.issues
