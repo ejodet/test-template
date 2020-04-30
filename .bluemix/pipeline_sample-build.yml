@@ -3,7 +3,7 @@ stages:
   - branch: master
     dir_name: null
     type: git
-    service: sample-repo
+    service: gitlab02
   jobs:
   - artifact_dir: ""
     name: Build
@@ -14,6 +14,7 @@ stages:
   triggers:
   - events: '{"push":true,"pull_request":false,"pull_request_closed":false}'
     type: git
+  worker: null
 - inputs:
   - dir_name: null
     job: Build
@@ -32,8 +33,8 @@ stages:
       APP_URL=http://$(cf app $CF_APP_NAME | grep -e urls: -e routes: | awk '{print
       $2}')\n# View logs\n#cf logs \"${CF_APP}\" --recent\n"
     target:
-      api_key: nzcm0FKVBy+6CsXjeeyXnLa130+66g0gDwGB9QGtT/yV5mftzARguOrjf+47LOi0QivgI3QCx+70jKTkn0K4zQ==
-      application: CF-TEMPLATE
+      api_key: U/pt0ayCQKQI1VcNW8s8+tP4AcVeQGHy3AbVl+j8WOYwTE9nenyIkR3+8zqDiqPzQivgI3QCx+70jKTkn0K4zQ==
+      application: issue12361
       organization: eric_jodet@fr.ibm.com
       region_id: ibm:ys1:us-south
       space: dev

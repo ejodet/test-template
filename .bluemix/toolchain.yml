@@ -1,58 +1,57 @@
 services:
-  sample-build:
-    parameters:
-      api_url: http://pipeline-service/pipeline/pipelines/06f3aa18-0c02-4488-8b65-a306c226bc7e
-      configuration:
-        content:
-          $text: pipeline_sample-build.yml
-      external_api_url: https://pipeline-service.us-south.devops.dev.cloud.ibm.com/pipeline/pipelines/06f3aa18-0c02-4488-8b65-a306c226bc7e
-      label: CF-TEMPLATE
-      name: CF-TEMPLATE
-      services:
-      - sample-repo
-      type: classic
-      ui-pipeline: true
-      ui_pipeline: true
-    service_id: pipeline
-  sample-repo:
+  gitlab02:
     parameters:
       api_root_url: http://mjgit.rtp.raleigh.ibm.com/api
       authorized: f3ed0574-d5fa-48aa-bede-742901c1f157
       blind_connection: true
-      enable_traceability: true
+      enable_traceability: false
       extra_capabilities:
       - capability_id: git.issues
-        dashboard_url: http://mjgit.rtp.raleigh.ibm.com/ejodet/mytestproject/issues
+        dashboard_url: http://mjgit.rtp.raleigh.ibm.com/ejodet/mytestproject.git/issues
         display_name: Issues
         enabled: true
-        label: CF-TEMPLATE
+        label: mytestproject
         readme: false
         tags:
         - think
         - code
       git_id: f3ed0574-d5fa-48aa-bede-742901c1f157
       has_issues: true
-      integration_owner: IBMid-270001AA6Q
-      label: CF-TEMPLATE
-      namespace_table: ""
-      owner_id: eric_jodet
-      private_repo: true
-      repo_name: CF-TEMPLATE
+      integration_owner: ""
+      label: mytestproject
+      owner_id: ejodet
+      private_repo: false
+      repo_name: mytestproject
       repo_url: http://mjgit.rtp.raleigh.ibm.com/ejodet/mytestproject.git
-      source_repo_url: https://github.com/open-toolchain/node-hello-world
+      source_repo_url: ""
       token_url: https://otc-github-consolidated-broker.us-south.devops.dev.cloud.ibm.com/github/token?git_id=f3ed0574-d5fa-48aa-bede-742901c1f157
       type: link
     service_id: gitlab
+  sample-build:
+    parameters:
+      api_url: http://pipeline-service/pipeline/pipelines/3f235ead-abed-4b3e-9be0-83fa1ddd4e2e
+      configuration:
+        content:
+          $text: pipeline_sample-build.yml
+      external_api_url: https://pipeline-service.us-south.devops.dev.cloud.ibm.com/pipeline/pipelines/3f235ead-abed-4b3e-9be0-83fa1ddd4e2e
+      label: issue12361
+      name: issue12361
+      services:
+      - gitlab02
+      type: classic
+      ui-pipeline: true
+      ui_pipeline: true
+    service_id: pipeline
   webide:
     parameters:
-      dashboard_url: /devops/code/edit/edit.html#,toolchain=84998709-c364-4ea5-98a8-eb56185fb438
-      toolchain_id: 84998709-c364-4ea5-98a8-eb56185fb438
+      dashboard_url: /devops/code/edit/edit.html#,toolchain=ebf731f1-495f-4785-8326-8891d064f269
+      toolchain_id: ebf731f1-495f-4785-8326-8891d064f269
     service_id: orion
 template:
-  description: CF-TEMPLATE
-  name: Develop a Cloud Foundry app
+  description: issue12361
+  name: Create a TC with air-gapped repo
   required:
-  - sample-repo
+  - gitlab02
 toolchain:
-  name: CF-TEMPLATE
+  name: FromAirGappedTC
 version: 2
