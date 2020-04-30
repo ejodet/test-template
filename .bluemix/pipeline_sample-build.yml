@@ -3,7 +3,7 @@ stages:
   - branch: master
     dir_name: null
     type: git
-    service: gitlab02
+    service: sample-repo
   jobs:
   - artifact_dir: ""
     name: Build
@@ -12,30 +12,42 @@ stages:
   permission:
     execute: TOOLCHAIN_ADMINS
   triggers:
-  - events: '{"push":true,"pull_request":false,"pull_request_closed":false}'
+  - events: '{"push":true}'
     type: git
-  worker: null
 - inputs:
   - dir_name: null
     job: Build
     stage: BUILD
     type: job
   jobs:
-  - deploy_type: cf
+  - curatedDockerImage: default
+    deploy_type: cf
     name: Rolling Deploy
-    script: "#!/bin/bash\n# Push app\nif ! cf app \"$CF_APP\"; then  \n  cf push \"$CF_APP\"\nelse\n
-      \ OLD_CF_APP=\"${CF_APP}-OLD-$(date +\"%s\")\"\n  rollback() {\n    set +e  \n
-      \   if cf app \"$OLD_CF_APP\"; then\n      cf logs \"$CF_APP\" --recent\n      cf
-      delete \"$CF_APP\" -f\n      cf rename \"$OLD_CF_APP\" \"$CF_APP\"\n    fi\n
-      \   exit 1\n  }\n  set -e\n  trap rollback ERR\n  cf rename \"$CF_APP\" \"$OLD_CF_APP\"\n
-      \ cf push \"$CF_APP\"\n  cf delete \"$OLD_CF_APP\" -f\nfi\n# Export app name
-      and URL for use in later Pipeline jobs\nexport CF_APP_NAME=\"$CF_APP\"\nexport
-      APP_URL=http://$(cf app $CF_APP_NAME | grep -e urls: -e routes: | awk '{print
-      $2}')\n# View logs\n#cf logs \"${CF_APP}\" --recent\n"
+    script: "#!/bin/bash\n# Push app\nif ! cf app $CF_APP; then  \n  cf push $CF_APP\nelse\n
+      \ OLD_CF_APP=${CF_APP}-OLD-$(date +\"%s\")\n  rollback() {\n    set +e  \n    if
+      cf app $OLD_CF_APP; then\n      cf logs $CF_APP --recent\n      cf delete $CF_APP
+      -f\n      cf rename $OLD_CF_APP $CF_APP\n    fi\n    exit 1\n  }\n  set -e\n
+      \ trap rollback ERR\n  cf rename $CF_APP $OLD_CF_APP\n  cf push $CF_APP\n  cf
+      delete $OLD_CF_APP -f\nfi\n# Export app name and URL for use in later Pipeline
+      jobs\nexport CF_APP_NAME=\"$CF_APP\"\nexport APP_URL=http://$(cf app $CF_APP_NAME
+      | grep -e urls: -e routes: | awk '{print $2}')\n# View logs\n#cf logs \"${CF_APP}\"
+      --recent\n"
     target:
-      api_key: Z5j4fNhb6zWuRG20RxWcuPnoT3E8cEkGWi/auhToK1WeFf1YM9nxQSPtdZaCCj67QivgI3QCx+70jKTkn0K4zQ==
-      application: test-export-air-gapped
+      api_key: fvb1oQnA3J4MABzKZBQMSOtXoSQvDF1cfI4fenYQ+tU+SZg1XWLQ98X1lIZsIdgqQivgI3QCx+70jKTkn0K4zQ==
+      application: simple-toolchain-20190205084227828
       organization: eric_jodet@fr.ibm.com
+      region_id: ibm:ys1:us-south
+      space: dev
+    type: deployer
+  - curatedDockerImage: default
+    deploy_type: cf
+    name: Deploy
+    script: |
+      #!/bin/bash
+      cf push "${CF_APP}"
+    target:
+      application: simple-toolchain-20190205084227828
+      organization: BluemixDevOpsORG
       region_id: ibm:ys1:us-south
       space: dev
     type: deployer
