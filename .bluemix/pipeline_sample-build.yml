@@ -14,6 +14,7 @@ stages:
   triggers:
   - events: '{"push":true,"pull_request":false,"pull_request_closed":false}'
     type: git
+  worker: null
 - inputs:
   - dir_name: null
     job: Build
