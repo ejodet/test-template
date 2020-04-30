@@ -1,59 +1,56 @@
 services:
-  sample-build:
+  gitlab00:
     parameters:
-      api_url: http://pipeline-service/pipeline/pipelines/a319c3a6-4c73-4679-af8c-6cd39d49c7a0
-      configuration:
-        content:
-          $text: pipeline_sample-build.yml
-      external_api_url: https://pipeline-service.us-south.devops.dev.cloud.ibm.com/pipeline/pipelines/a319c3a6-4c73-4679-af8c-6cd39d49c7a0
-      label: simple-toolchain-20190205084227828
-      name: simple-toolchain-20190205084227828
-      services:
-      - sample-repo
-      ui-pipeline: true
-      ui_pipeline: true
-    service_id: pipeline
-  sample-repo:
-    parameters:
-      access_token: ""
-      api_root_url: https://git.stage1.ng.bluemix.net/api
-      authorized: ""
-      custom_host: ""
-      enable_traceability: true
+      api_root_url: http://mjgit.rtp.raleigh.ibm.com/api
+      authorized: f3ed0574-d5fa-48aa-bede-742901c1f157
+      blind_connection: true
+      enable_traceability: false
+      env_id: ibm:ys1:us-south
       extra_capabilities:
       - capability_id: git.issues
-        dashboard_url: https://us-south.git.dev.cloud.ibm.com/eric_jodet/simple-toolchain-20190205084227828/issues
+        dashboard_url: http://mjgit.rtp.raleigh.ibm.com/ejodet/mytestproject.git/issues
         display_name: Issues
-        enabled: true
-        label: simple-toolchain-20190205084227828
+        enabled: false
+        label: mytestproject
+        readme: false
         tags:
         - think
         - code
-      git_id: hostedgit
-      has_issues: true
-      label: simple-toolchain-20190205084227828
-      namespace_table: ""
-      owner_id: eric_jodet
-      private_repo: true
-      repo_name: simple-toolchain-20190205084227828
-      repo_url: https://us-south.git.dev.cloud.ibm.com/eric_jodet/simple-toolchain-20190205084227828.git
-      root_url: ""
-      source_repo_url: ""
-      title: ""
-      token_url: https://otc-github-consolidated-broker.us-south.devops.dev.cloud.ibm.com/github/token?git_id=hostedgit
+      git_id: f3ed0574-d5fa-48aa-bede-742901c1f157
+      label: mytestproject
+      owner_id: ejodet
+      private_repo: false
+      repo_name: mytestproject
+      repo_url: http://mjgit.rtp.raleigh.ibm.com/ejodet/mytestproject.git
+      token_url: https://otc-github-consolidated-broker.us-south.devops.dev.cloud.ibm.com/github/token?git_id=f3ed0574-d5fa-48aa-bede-742901c1f157
+      toolchainId: 84998709-c364-4ea5-98a8-eb56185fb438
       type: link
-    service_id: hostedgit
+    service_id: gitlab
+  sample-build:
+    parameters:
+      api_url: http://pipeline-service/pipeline/pipelines/06f3aa18-0c02-4488-8b65-a306c226bc7e
+      configuration:
+        content:
+          $text: pipeline_sample-build.yml
+      external_api_url: https://pipeline-service.us-south.devops.dev.cloud.ibm.com/pipeline/pipelines/06f3aa18-0c02-4488-8b65-a306c226bc7e
+      label: CF-TEMPLATE
+      name: CF-TEMPLATE
+      services:
+      - gitlab00
+      type: classic
+      ui-pipeline: true
+      ui_pipeline: true
+    service_id: pipeline
   webide:
     parameters:
-      container_url: ""
-      dashboard_url: /devops/code/edit/edit.html#,toolchain=aeefc4e1-7965-459e-9587-7d44ff2d6b46
-      toolchain_id: aeefc4e1-7965-459e-9587-7d44ff2d6b46
+      dashboard_url: /devops/code/edit/edit.html#,toolchain=84998709-c364-4ea5-98a8-eb56185fb438
+      toolchain_id: 84998709-c364-4ea5-98a8-eb56185fb438
     service_id: orion
 template:
-  description: simple-toolchain-20190205084227828
+  description: CF-TEMPLATE
   name: Develop a Cloud Foundry app
   required:
-  - sample-repo
+  - gitlab00
 toolchain:
-  name: simple-toolchain-20190205084227828
+  name: AIR-GAPPED-TOOLCHAIN
 version: 2
