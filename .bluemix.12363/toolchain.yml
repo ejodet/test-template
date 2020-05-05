@@ -1,0 +1,55 @@
+services:
+  sample-build:
+    parameters:
+      api_url: https://devops-api.w3ibm.bluemix.net/v1/pipeline/pipelines/5b091301-c0de-4fa7-bd8b-398563821baa
+      configuration:
+        content:
+          $text: pipeline_sample-build.yml
+      label: ALL-JOBS
+      name: ALL-JOBS
+      services:
+      - sample-repo
+      ui-pipeline: true
+      ui_pipeline: true
+    service_id: pipeline
+  sample-repo:
+    parameters:
+      api_root_url: https://github.ibm.com/api
+      enable_traceability: true
+      extra_capabilities:
+      - capability_id: git.issues
+        dashboard_url: https://github.ibm.com/eric-jodet/ALL-JOBS/issues
+        display_name: Issues
+        enabled: true
+        label: ALL-JOBS
+        tags:
+        - think
+        - code
+      git_id: integrated
+      has_issues: true
+      label: ALL-JOBS
+      legal: true
+      legal_label: ""
+      namespace_table: ""
+      owner_id: eric-jodet
+      private_repo: false
+      repo_name: ALL-JOBS
+      repo_url: https://github.ibm.com/eric-jodet/ALL-JOBS.git
+      source_repo_url: https://github.com/open-toolchain/node-hello-world
+      token_url: https://otc-github-consolidated-broker.w3ibm.bluemix.net/github/token?git_id=integrated
+      type: link
+    service_id: github_integrated
+  webide:
+    parameters:
+      container_url: ""
+      dashboard_url: /devops/code/edit/edit.html#,toolchain=97a94ccd-7179-4a07-b407-726226553073
+      toolchain_id: 97a94ccd-7179-4a07-b407-726226553073
+    service_id: orion
+template:
+  description: ALL-JOBS
+  name: Develop a Cloud Foundry app
+  required:
+  - sample-repo
+toolchain:
+  name: ALL-JOBS-FIXED
+version: 2

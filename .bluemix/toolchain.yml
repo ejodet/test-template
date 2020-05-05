@@ -1,55 +1,57 @@
 services:
-  sample-build:
+  gitlab02:
     parameters:
-      api_url: https://devops-api.w3ibm.bluemix.net/v1/pipeline/pipelines/5b091301-c0de-4fa7-bd8b-398563821baa
-      configuration:
-        content:
-          $text: pipeline_sample-build.yml
-      label: ALL-JOBS
-      name: ALL-JOBS
-      services:
-      - sample-repo
-      ui-pipeline: true
-      ui_pipeline: true
-    service_id: pipeline
-  sample-repo:
-    parameters:
-      api_root_url: https://github.ibm.com/api
-      enable_traceability: true
+      api_root_url: http://mjgit.rtp.raleigh.ibm.com/api
+      authorized: f3ed0574-d5fa-48aa-bede-742901c1f157
+      blind_connection: true
+      enable_traceability: false
       extra_capabilities:
       - capability_id: git.issues
-        dashboard_url: https://github.ibm.com/eric-jodet/ALL-JOBS/issues
+        dashboard_url: http://mjgit.rtp.raleigh.ibm.com/ejodet/mytestproject.git/issues
         display_name: Issues
         enabled: true
-        label: ALL-JOBS
+        label: mytestproject
+        readme: false
         tags:
         - think
         - code
-      git_id: integrated
+      git_id: f3ed0574-d5fa-48aa-bede-742901c1f157
       has_issues: true
-      label: ALL-JOBS
-      legal: true
-      legal_label: ""
-      namespace_table: ""
-      owner_id: eric-jodet
+      integration_owner: ""
+      label: mytestproject
+      owner_id: ejodet
       private_repo: false
-      repo_name: ALL-JOBS
-      repo_url: https://github.ibm.com/eric-jodet/ALL-JOBS.git
-      source_repo_url: https://github.com/open-toolchain/node-hello-world
-      token_url: https://otc-github-consolidated-broker.w3ibm.bluemix.net/github/token?git_id=integrated
+      repo_name: mytestproject
+      repo_url: http://mjgit.rtp.raleigh.ibm.com/ejodet/mytestproject.git
+      source_repo_url: ""
+      token_url: https://otc-github-consolidated-broker.us-south.devops.dev.cloud.ibm.com/github/token?git_id=f3ed0574-d5fa-48aa-bede-742901c1f157
       type: link
-    service_id: github_integrated
+    service_id: gitlab
+  sample-build:
+    parameters:
+      api_url: http://pipeline-service/pipeline/pipelines/3f235ead-abed-4b3e-9be0-83fa1ddd4e2e
+      configuration:
+        content:
+          $text: pipeline_sample-build.yml
+      external_api_url: https://pipeline-service.us-south.devops.dev.cloud.ibm.com/pipeline/pipelines/3f235ead-abed-4b3e-9be0-83fa1ddd4e2e
+      label: issue12361
+      name: issue12361
+      services:
+      - gitlab02
+      type: classic
+      ui-pipeline: true
+      ui_pipeline: true
+    service_id: pipeline
   webide:
     parameters:
-      container_url: ""
-      dashboard_url: /devops/code/edit/edit.html#,toolchain=97a94ccd-7179-4a07-b407-726226553073
-      toolchain_id: 97a94ccd-7179-4a07-b407-726226553073
+      dashboard_url: /devops/code/edit/edit.html#,toolchain=ebf731f1-495f-4785-8326-8891d064f269
+      toolchain_id: ebf731f1-495f-4785-8326-8891d064f269
     service_id: orion
 template:
-  description: ALL-JOBS
-  name: Develop a Cloud Foundry app
+  description: issue12361
+  name: Create a TC with air-gapped repo
   required:
-  - sample-repo
+  - gitlab02
 toolchain:
-  name: ALL-JOBS-FIXED
+  name: FromAirGappedTCFixSidney
 version: 2

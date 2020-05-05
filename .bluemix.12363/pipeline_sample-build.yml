@@ -1,0 +1,393 @@
+stages:
+- inputs:
+  - branch: master
+    dir_name: null
+    type: git
+    service: sample-repo
+  jobs:
+  - artifact_dir: ""
+    name: Simple Build
+    type: builder
+  - artifact_dir: output
+    build_type: ant
+    name: Ant Build
+    script: |-
+      #!/bin/bash
+      ant
+    type: builder
+  - artifact_dir: ""
+    build_type: customimage
+    name: Custom Docker Image Build
+    script: |
+      #!/bin/bash
+    type: builder
+  - artifact_dir: ""
+    build_type: gradle
+    name: Gradle Build
+    script: |-
+      #!/bin/bash
+      # The default Gradle version is 1.12
+      # To use Gradle 2.9, uncomment the following line:
+      #export PATH="$GRADLE2_HOME/bin:$PATH"
+      gradle
+    type: builder
+  - BUILD_COMMAND: |
+      #!/bin/bash
+      # environment variables are available:
+      # MAVEN_NAME: name of the maven service instance
+      # MAVEN_USER_ID: userid for the maven repository
+      # MAVEN_TOKEN: the token or password for the maven repository
+      # MAVEN_SNAPSHOT_URL: the maven snapshot repository
+      # MAVEN_RELEASE_URL: the maven release repository
+      # MAVEN_MIRROR_URL: the maven mirror repository
+      # SONAR_INSTANCE_NAME: the name of the SonarQube instance
+      # SONAR_SERVER_URL: the url of the SonarQube server
+      # SONAR_USER_ID: SonarQube user name
+      # SONAR_USER_TOKEN: SonarQube password or authentication token
+      # $HOME/.gradle/gradle.properties contains all properties for maven repositories and sonarQube server url
+      # mavenCentral is a property for the maven mirror repository
+      # mavenSnapshot is a property for the maven snapshot repository
+      # mavenRelease is a property for the maven release repository
+      # mavenUsername is a property for the maven username
+      # mavenPassword is a property for the maven user's password
+      # Default gradle version: 1.12
+      # To use Gradle 2.9, uncomment the following line:
+      #export PATH="$GRADLE2_HOME/bin:$PATH"
+
+      #gradle sonarqube
+      gradle assemble
+    SERVICE_INSTANCE: (default)
+    SERVICE_INSTANCE_TYPE: nexus
+    SONAR_SERVICE_INSTANCE: (default)
+    deploy_permission: DEV_IN_SPACE
+    extension_id: ibm.devops.services.pipeline.gradle.build
+    name: Graddle (A/N/S/D) Build
+    type: builder
+  - artifact_dir: ""
+    build_type: grunt
+    name: Grunt Build
+    script: |-
+      #!/bin/bash
+      # The default Node.js version is 0.10.40
+      # To use Node.js 0.10.48, uncomment the following line:
+      #export PATH=/opt/IBM/node-v0.10.48/bin:$PATH
+      # To use Node.js 0.12.7, uncomment the following line:
+      #export PATH=/opt/IBM/node-v0.12/bin:$PATH
+      # To use Node.js 4.4.5, uncomment the following line:
+      #export PATH=/opt/IBM/node-v4.4.5/bin:$PATH
+      # To use Node.js 6.7.0, uncomment the following line:
+      #export PATH=/opt/IBM/node-v6.7.0/bin:$PATH
+      npm install
+      grunt
+    type: builder
+  - artifact_dir: target
+    build_type: maven
+    name: Maven Build
+    script: |-
+      #!/bin/bash
+      mvn -B package
+    type: builder
+  - BUILD_COMMAND: "#!/bin/bash\n# environment variables are available:\n# MAVEN_NAME:
+      name of the service instance\n# MAVEN_USER_ID: userid for the maven repository\n#
+      MAVEN_TOKEN: the token or password for the maven repository\n# MAVEN_SNAPSHOT_URL:
+      the maven snapshot repository\n# MAVEN_RELEASE_URL: the maven release repository\n#
+      MAVEN_MIRROR_URL: the maven mirror repository\n# SONAR_INSTANCE_NAME: the name
+      of the SonarQube instance\n# SONAR_SERVER_URL: the url of the SonarQube server\n#
+      SONAR_USER_ID: SonarQube user name\n# SONAR_USER_TOKEN: SonarQube password or
+      authentication token\n# The settings.xml is available in $HOME/.m2/settings.xml\n#
+      The name of the snapshots repository is 'snapshots'\n# The name of the release
+      repository is 'releases'\n# The name of the mirror repository is 'central'\n\nmvn
+      -B clean package \n#mvn -DaltDeploymentRepository=snapshots::default::${MAVEN_SNAPSHOT_URL}
+      deploy\n"
+    SERVICE_INSTANCE: (default)
+    SERVICE_INSTANCE_TYPE: nexus
+    SONAR_SERVICE_INSTANCE: (default)
+    deploy_permission: DEV_IN_SPACE
+    extension_id: ibm.devops.services.pipeline.maven.build.deploy
+    name: Maven (A/N/S/D) Build
+    type: builder
+  - artifact_dir: ""
+    build_type: npm
+    name: NPM Build
+    script: |-
+      #!/bin/bash
+      # The default Node.js version is 0.10.40
+      # To use Node.js 0.10.48, uncomment the following line:
+      #export PATH=/opt/IBM/node-v0.10.48/bin:$PATH
+      # To use Node.js 0.12.7, uncomment the following line:
+      #export PATH=/opt/IBM/node-v0.12/bin:$PATH
+      # To use Node.js 4.4.5, uncomment the following line:
+      #export PATH=/opt/IBM/node-v4.4.5/bin:$PATH
+      # To use Node.js 6.7.0, uncomment the following line:
+      #export PATH=/opt/IBM/node-v6.7.0/bin:$PATH
+      npm install
+    type: builder
+  name: All builder types - part 1
+  triggers:
+  - type: commit
+- inputs:
+  - branch: master
+    dir_name: null
+    type: git
+    service: sample-repo
+  jobs:
+  - COMMAND: "#!/bin/bash\n# The following colors have been defined to help with presentation
+      of logs: green, red, label_color, no_color.  \nlog_and_echo \"$LABEL\" \"Starting
+      build script\"\n\n# The IBM Container BM Containers plug-in (cf ic), Git client
+      (git), and IDS Inventory CLI (ids-inv) have been installed.\n# Based on the
+      organization and space selected in the Job credentials are in place for both
+      IBM Container Service and IBM Bluemix \n#####################\n# Run unit tests
+      \   #\n#####################\nlog_and_echo \"$LABEL\" \"No unit tests cases
+      have been checked in\"\n\n######################################\n# Build Container
+      via Dockerfile     #\n######################################\n\n# REGISTRY_URL=${CCS_REGISTRY_HOST}/${NAMESPACE}\n#
+      FULL_REPOSITORY_NAME=${REGISTRY_URL}/${IMAGE_NAME}:${APPLICATION_VERSION}\n#
+      If you wish to receive slack notifications, set SLACK_WEBHOOK_PATH as a property
+      on the stage.\n\nif [ -f Dockerfile ]; then \n    log_and_echo \"$LABEL\" \"Building
+      ${FULL_REPOSITORY_NAME}\"\n    ${EXT_DIR}/utilities/sendMessage.sh -l info -m
+      \"New container build requested for ${FULL_REPOSITORY_NAME}\"\n    # build image\n
+      \   BUILD_COMMAND=\"\"\n    if [ \"${USE_CACHED_LAYERS}\" == \"true\" ]; then
+      \n        BUILD_COMMAND=\"build --pull --tag ${FULL_REPOSITORY_NAME} ${WORKSPACE}\"\n
+      \       ice_retry ${BUILD_COMMAND}\n        RESULT=$?\n    else \n        BUILD_COMMAND=\"build
+      --no-cache --tag ${FULL_REPOSITORY_NAME} ${WORKSPACE}\"\n        ice_retry ${BUILD_COMMAND}\n
+      \       RESULT=$?\n    fi \n\n    if [ $RESULT -ne 0 ]; then\n        log_and_echo
+      \"$ERROR\" \"Error building image\"\n        ice_retry info \n        ice_retry
+      images\n        ${EXT_DIR}/print_help.sh\n        ${EXT_DIR}/utilities/sendMessage.sh
+      -l bad -m \"Container build of ${FULL_REPOSITORY_NAME} failed. $(get_error_info)\"\n
+      \       exit 1\n    else\n        log_and_echo \"$SUCCESSFUL\" \"Container build
+      of ${FULL_REPOSITORY_NAME} was successful\"\n        ${EXT_DIR}/utilities/sendMessage.sh
+      -l good -m \"Container build of ${FULL_REPOSITORY_NAME} was successful\"\n    fi
+      \ \nelse \n    log_and_echo \"$ERROR\" \"Dockerfile not found in project\"\n
+      \   ${EXT_DIR}/utilities/sendMessage.sh -l bad -m \"Failed to get Dockerfile.
+      $(get_error_info)\"\n    exit 1\nfi  \n\n######################################################################################\n#
+      Copy any artifacts that will be needed for deployment and testing to $WORKSPACE
+      \   #\n######################################################################################\necho
+      \"IMAGE_NAME=${FULL_REPOSITORY_NAME}\" >> $ARCHIVE_DIR/build.properties"
+    IMAGE_NAME: toto
+    USE_CACHED_LAYERS: "true"
+    deploy_permission: DEV_IN_SPACE
+    extension_id: ibm.devops.services.pipeline.container.builder
+    name: IBM Container Registry Build
+    target:
+      organization: eric_jodetfribmcom
+      region_id: w3ibm:prod:us-south
+      space: dev
+    type: builder
+  - artifact_dir: target
+    build_type: maven
+    name: Maven Build
+    script: |-
+      #!/bin/bash
+      mvn -B package
+    type: builder
+  - BUILD_COMMAND: "#!/bin/bash\n# environment variables are available:\n# MAVEN_NAME:
+      name of the service instance\n# MAVEN_USER_ID: userid for the maven repository\n#
+      MAVEN_TOKEN: the token or password for the maven repository\n# MAVEN_SNAPSHOT_URL:
+      the maven snapshot repository\n# MAVEN_RELEASE_URL: the maven release repository\n#
+      MAVEN_MIRROR_URL: the maven mirror repository\n# SONAR_INSTANCE_NAME: the name
+      of the SonarQube instance\n# SONAR_SERVER_URL: the url of the SonarQube server\n#
+      SONAR_USER_ID: SonarQube user name\n# SONAR_USER_TOKEN: SonarQube password or
+      authentication token\n# The settings.xml is available in $HOME/.m2/settings.xml\n#
+      The name of the snapshots repository is 'snapshots'\n# The name of the release
+      repository is 'releases'\n# The name of the mirror repository is 'central'\n\nmvn
+      -B clean package \n#mvn -DaltDeploymentRepository=snapshots::default::${MAVEN_SNAPSHOT_URL}
+      deploy\n"
+    SERVICE_INSTANCE: (default)
+    SERVICE_INSTANCE_TYPE: nexus
+    SONAR_SERVICE_INSTANCE: (default)
+    deploy_permission: DEV_IN_SPACE
+    extension_id: ibm.devops.services.pipeline.maven.build.deploy
+    name: Maven (A/N/S/D) Build
+    type: builder
+  - artifact_dir: ""
+    build_type: npm
+    name: NPM Build
+    script: |-
+      #!/bin/bash
+      # The default Node.js version is 0.10.40
+      # To use Node.js 0.10.48, uncomment the following line:
+      #export PATH=/opt/IBM/node-v0.10.48/bin:$PATH
+      # To use Node.js 0.12.7, uncomment the following line:
+      #export PATH=/opt/IBM/node-v0.12/bin:$PATH
+      # To use Node.js 4.4.5, uncomment the following line:
+      #export PATH=/opt/IBM/node-v4.4.5/bin:$PATH
+      # To use Node.js 6.7.0, uncomment the following line:
+      #export PATH=/opt/IBM/node-v6.7.0/bin:$PATH
+      npm install
+    type: builder
+  - BUILD_COMMAND: |
+      #!/bin/bash
+      # environment variables are available:
+      # MAVEN_NAME: name of the maven service instance
+      # MAVEN_USER_ID: userid for the maven repository
+      # MAVEN_TOKEN: the token or password for the maven repository
+      # MAVEN_SNAPSHOT_URL: the maven snapshot repository
+      # MAVEN_RELEASE_URL: the maven release repository
+      # MAVEN_MIRROR_URL: the maven mirror repository
+      # SONAR_INSTANCE_NAME: the name of the SonarQube instance
+      # SONAR_SERVER_URL: the url of the SonarQube server
+      # SONAR_USER_ID: SonarQube user name
+      # SONAR_USER_TOKEN: SonarQube password or authentication token
+      # $HOME/.gradle/gradle.properties contains all properties for maven repositories and sonarQube server url
+      # mavenCentral is a property for the maven mirror repository
+      # mavenSnapshot is a property for the maven snapshot repository
+      # mavenRelease is a property for the maven release repository
+      # mavenUsername is a property for the maven username
+      # mavenPassword is a property for the maven user's password
+      # Default gradle version: 1.12
+      # To use Gradle 2.9, uncomment the following line:
+      #export PATH="$GRADLE2_HOME/bin:$PATH"
+
+      #gradle sonarqube
+      gradle assemble
+    INC_SNAPSHOT: "false"
+    SERVICE_INSTANCE: (default)
+    SERVICE_INSTANCE_TYPE: nexus
+    SONAR_SERVICE_INSTANCE: (default)
+    deploy_permission: DEV_IN_SPACE
+    extension_id: ibm.devops.services.pipeline.npm.build
+    name: NPM (A/N/S/D) Build
+    type: builder
+  - artifact_dir: ""
+    build_type: shell
+    name: Shell script Build
+    script: |-
+      #!/bin/bash
+      # your script here
+    type: builder
+  name: All builder types - part 2
+  triggers:
+  - type: commit
+- inputs:
+  - dir_name: null
+    job: Simple Build
+    stage: All builder types - part 1
+    type: job
+  jobs:
+  - name: Simple Test
+    script: |-
+      #!/bin/bash
+      #Invoke tests here
+    test_type: simple
+    type: tester
+  - docker_image: toto
+    name: Custom Docker Image Test
+    script: ""
+    test_type: customimage
+    type: tester
+  - COMMAND: |-
+      #!/bin/bash
+      # invoke tests here
+    deploy_permission: DEV_IN_SPACE
+    extension_id: ibm.devops.services.pipeline.bluemix.simplified.shell
+    name: Simplified Bluemix Test
+    target:
+      organization: eric_jodetfribmcom
+      region_id: w3ibm:prod:us-south
+      space: dev
+    type: tester
+  name: All tester type
+  triggers:
+  - type: stage
+- inputs:
+  - dir_name: null
+    job: Simple Build
+    stage: All builder types - part 1
+    type: job
+  jobs:
+  - deploy_permission: DEV_IN_SPACE
+    deploy_type: cf
+    name: Cloud Foundry Deploy
+    script: |
+      #!/bin/bash
+      # Push app
+      export CF_APP_NAME="$CF_APP"
+      cf push "${CF_APP_NAME}"
+      export APP_URL=http://$(cf app $CF_APP_NAME | grep -e urls: -e routes: | awk '{print $2}')
+      # View logs
+      #cf logs "${CF_APP_NAME}" --recent
+    target:
+      application: ALL-JOBS
+      organization: eric_jodetfribmcom
+      region_id: w3ibm:prod:us-south
+      space: dev
+    type: deployer
+  - deploy_permission: DEV_IN_SPACE
+    deploy_type: customimage
+    docker_image: toto
+    name: Custom Docker Image Deploy
+    script: titi
+    type: deployer
+  - COMMAND: "#!/bin/bash\n# The following are some example deployment scripts.  Use
+      these as is or fork them and include your updates here:\necho -e \"${label_color}Starting
+      deployment script${no_color}\"\n\n\n# To view/fork this script goto: https://github.com/Osthanes/deployscripts\n#
+      git_retry will retry git calls to prevent pipeline failure on temporary github
+      problems\n# the code can be found in git_util.sh at https://github.com/Osthanes/container_deployer\ngit_retry
+      clone https://github.com/Osthanes/deployscripts.git deployscripts\n\n\n# You
+      can deploy your Image as either a single Container or as a Container \n# Group.
+      \ A Container Group deploys a number of containers to enhance\n# scalability
+      or reliability.  By default we will deploy as a single \n# container.  To switch
+      to a group deploy, comment out the line below\n# containing deploycontainer.sh
+      and uncomment the line for deploygroup.sh\n\n# Deploy with containers:\n# Optional
+      environment properties (can be set directly in this script, or defined as environment
+      properties):\n#      NAME              Value         Description\n#   =============
+      \     =========     ==============\n#   BIND_TO             String       Specify
+      a Bluemix application name that whose bound services you wish to make available
+      to the container.  By default this is not set.\n#   CONTAINER_SIZE      String
+      \      Specify container size: pico (64), nano (128), micro (256), tiny (512),
+      small (1024), medium (2048),\n#                                                            large
+      (4096), x-large (8192), 2x-large (16384).\n#                                    Default
+      is micro (256).\n#   CONCURRENT_VERSIONS Number       Number of versions of
+      this container to leave active.  \n#                                    Default
+      is 1\n#\n/bin/bash deployscripts/deploycontainer.sh\n\n# Deploy Container Group:\n#
+      Optional environment properties (can be set directly in this script, or defined
+      as environment properties):\n#      NAME              Value         Description\n#
+      \  =============      =========     ==============\n#   ROUTE_HOSTNAME      String
+      \      Specify the Hostname for the Cloud Foundry Route you wish to assign to
+      this container group.  By default this is not set.\n#   ROUTE_DOMAIN        String
+      \      Specify domain name for the Cloud Foundry Route you wish to assign to
+      this container group.  By default this is not set.\n#   BIND_TO             String
+      \      Specify a Bluemix application name that whose bound services you wish
+      to make available to the container.  By default this is not set.\n#   DESIRED_INSTANCES:
+      \ Number       Specify the number of instances in the group.  Default value
+      is 1.\n#   AUTO_RECOVERY:      Boolean      Set auto-recovery to true/false.
+      \ Default value is false.\n\n#                                    Default is
+      false.\n#   CONTAINER_SIZE      String       Specify container size: pico (64),
+      nano (128), micro (256), tiny (512), small (1024), medium (2048),\n#                                                            large
+      (4096), x-large (8192), 2x-large (16384).\n#                                    Default
+      is micro (256).\n#   CONCURRENT_VERSIONS Number       Number of versions of
+      this group to leave active.\n#                                    Default is
+      1\n# IF YOU WANT CONTAINER GROUPS .. uncomment the next line, and comment out
+      the previous deployment line (/bin/bash deployscripts/deploygroup.sh)\n#/bin/bash
+      deployscripts/deploygroup.sh\n\nRESULT=$?\n\n# source the deploy property file\nif
+      [ -f \"${DEPLOY_PROPERTY_FILE}\" ]; then\n  source \"$DEPLOY_PROPERTY_FILE\"\nfi\n\n#########################\n#
+      Environment DETAILS   #\n#########################\n# The environment has been
+      setup.\n# The Cloud Foundry CLI (cf), IBM Container Service CLI (ice), Git client
+      (git), IDS Inventory CLI (ids-inv) and Python 2.7.3 (python) have been installed.\n#
+      Based on the organization and space selected in the Job credentials are in place
+      for both IBM Container Service and IBM Bluemix\n\n# The following colors have
+      been defined to help with presentation of logs: green, red, label_color, no_color.\nif
+      [ $RESULT -ne 0 ]; then\n    echo -e \"${red}Executed failed or had warnings
+      ${no_color}\"\n    ${EXT_DIR}/print_help.sh\n    exit $RESULT\nfi\necho -e \"${green}Execution
+      complete${no_label}\""
+    CONTAINER_NAME: myApplicationName
+    DEPLOY_TYPE: red_black
+    PORT: "80"
+    deploy_permission: DEV_IN_SPACE
+    extension_id: ibm.devops.services.pipeline.docker.deploy.ice
+    name: IBM Containers on Bluemix Deploy
+    target:
+      organization: eric_jodetfribmcom
+      region_id: w3ibm:prod:us-south
+      space: dev
+    type: deployer
+  name: DEPLOY
+  properties:
+  - name: CF_APP_NAME
+    type: text
+    value: undefined
+  - name: APP_URL
+    type: text
+    value: undefined
+  triggers:
+  - type: stage
+properties: null
